@@ -1,0 +1,2 @@
+class EntityEmployeeRelation < ApplicationRecord
+end
