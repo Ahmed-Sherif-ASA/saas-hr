@@ -23,6 +23,8 @@ class Employee < ApplicationRecord
     entity.organization.check_required_employees_count
   rescue StandardError => e
     errors.add(:employees_count, e.message)
+    # This abort is here just to illustrate the scenario but in real world we will just add the error and we can
+    # show it afterwards as an alert message
     throw(:abort)
   end
 end
