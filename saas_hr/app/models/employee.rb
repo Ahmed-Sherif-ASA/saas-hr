@@ -1,6 +1,7 @@
 class Employee < ApplicationRecord
   belongs_to :entity, polymorphic: true
   validate :check_max_employees_count, on: :create
+  before_destroy :check_required_employees_count
   after_create :increment_entity_employees_count
   after_destroy :decrement_entity_employees_count
 
@@ -13,11 +14,15 @@ class Employee < ApplicationRecord
   end
 
   def check_max_employees_count
-    organization = entity.organization
-    if organization.max_employees_count.zero?
-      errors.add(:employees_count, 'Kindly set the maximum number of employees for the organization')
-    elsif organization.employees_count + 1 > organization.max_employees_count
-      errors.add(:employees_count, 'Exceeded the threshold for employees count')
-    end
+    entity.organization.check_max_employees_count
+  rescue StandardError => e
+    errors.add(:employees_count, e.message)
+  end
+
+  def check_required_employees_count
+    entity.organization.check_required_employees_count
+  rescue StandardError => e
+    errors.add(:employees_count, e.message)
+    throw(:abort)
   end
 end
