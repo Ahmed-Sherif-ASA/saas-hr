@@ -1,6 +1,7 @@
 class Organization < ApplicationRecord
   has_many :companies
   has_many :branches, through: :companies
+  scope :emp_count_below_required, -> { where('employees_count < required_employees_count') }
 
   def check_max_employees_count
     if max_employees_count.zero?
